@@ -56,17 +56,21 @@ class MutateReconectingComponents:
 
         components = disjoints.get_disjoint_sets()
 
-        assert len(components) == 2, ""
-        lesser_idx  = min(components, key=lambda item: components[item])
-        greater_idx = max(components, key=lambda item: components[item])
+        lesser_idx  = min(components, key=lambda item: len(components[item]))
+        keys = components.keys() - set([lesser_idx])
 
-        for v in components[lesser_idx]:
-            for w in graph.adjacent_to(v):
-                if w in components[greater_idx]:
-                    candidates.push(graph.weight(w,v), (w,v))
+        for key in keys:
+            for v in components[lesser_idx]:
+                for w in graph.adjacent_to(v):
+                    if w in components[key]:
+                        candidates.push(graph.weight(w, v), (v, w))
 
-        w, v = candidates.pop()
-        result.add(w, v)
+        while len(disjoints.get_disjoint_sets()) >= 2:
+            w, v = candidates.pop()
+            if disjoints.find(w) != disjoints.find(v):
+                result.add(w, v)
+                disjoints.union(w,v)
+
 
         return result
 
