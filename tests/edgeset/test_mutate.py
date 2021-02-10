@@ -1,4 +1,5 @@
 from os import path
+from random import choice
 import unittest
 
 from ga4stpg.edgeset import EdgeSet
@@ -12,9 +13,12 @@ from ga4stpg.graph.util import is_steiner_tree
 
 class TestMutateReconectingComponents(unittest.TestCase):
 
-    def setUp(self) -> None:
-        filename = path.join('datasets', 'ORLibrary', 'steinb18.txt')
-        self.stpg  = ReaderORLibrary().parser(filename)
+    @classmethod
+    def setUpClass(cls) -> None:
+        possibles = [ f'steinb{ii}.txt' for ii in range(10, 19)]
+        filename = choice(possibles)
+        filename = path.join('datasets', 'ORLibrary', filename)
+        cls.stpg  = ReaderORLibrary().parser(filename)
 
     def test_simpliest(self):
         stpg  = self.stpg
@@ -51,10 +55,12 @@ class TestMutateReconectingComponents(unittest.TestCase):
         after = gen_random_prim(stpg)
         before = mutate(after)
 
-        after_cost, _  = evaluate(after)
-        before_cost, _ = evaluate(before)
+        after_cost, after_nro_components   = evaluate(after)
+        before_cost, before_nro_components = evaluate(before)
 
         self.assertGreaterEqual(after_cost, before_cost)
+        self.assertEqual(after_nro_components,  1)
+        self.assertEqual(before_nro_components, 1)
 
 if __name__ == "__main__":
     unittest.main()
