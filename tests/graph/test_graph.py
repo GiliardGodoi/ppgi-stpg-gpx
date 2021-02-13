@@ -133,11 +133,11 @@ class TestGraphDictionaryDataStructure(unittest.TestCase):
         self.assertNotIn(56,graph.adjacent_to(49))
 
         from _collections_abc import dict_keys
-        self.assertIsInstance(graph.adjacent_to(49, lazzy=False), set)
+        self.assertIsInstance(graph.adjacent_to(49, lazy=False), set)
         self.assertNotIsInstance(graph.adjacent_to(49),list)
         self.assertNotIsInstance(graph.adjacent_to(49),dict)
         self.assertNotIsInstance(graph.adjacent_to(49),set)
-        self.assertIsInstance(graph.adjacent_to(49, lazzy=False),set)
+        self.assertIsInstance(graph.adjacent_to(49, lazy=False),set)
 
         self.assertEqual(graph.degree(49), 3)
         self.assertEqual(graph.degree(8), 1)
