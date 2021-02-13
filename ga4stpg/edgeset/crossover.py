@@ -28,20 +28,20 @@ class CrossoverPrimRST:
         vi = terminals.pop()
         done.add(vi)
 
-        edges = set()
+        candidates_edges = set()
         for u in subgraph.adjacent_to(vi):
-            edges.add((vi, u))
+            candidates_edges.add((vi, u))
 
-        while edges and terminals:
-            edge = sample(edges, k=1)[0]
+        while candidates_edges and terminals:
+            edge = sample(candidates_edges, k=1)[0]
             v, w = edge
             if w not in done:
                 done.add(w)
                 result.add(v, w)
                 terminals.discard(w)
                 for u in subgraph.adjacent_to(w):
-                    if u not in done: edges.add((w, u))
-            edges.discard((v, w))
+                    if u not in done: candidates_edges.add((w, u))
+            candidates_edges.discard((v, w))
 
         return result
 
@@ -54,26 +54,23 @@ class CrossoverKruskalRST:
     def __call__(self, parent_a, parent_b):
         assert isinstance(parent_a, EdgeSet), f'parent_a has to be EdgeSet type. Give was {type(parent_a)}'
         assert isinstance(parent_b, EdgeSet), f'parent_b has to be EdgeSet type. Give was {type(parent_b)}'
-        stpg = self.stpg
-        terminals = set(stpg.terminals)
 
         edges = parent_a | parent_b
+
         done = DisjointSets()
-        for v in terminals:
+        for v in edges.vertices:
             done.make_set(v)
 
-        edges = list(edges)
+        edges = set(edges)
+
         result = EdgeSet()
         while edges and len(done.get_disjoint_sets()) > 1:
-            edge = edges.pop()
+            edge = sample(edges, k=1)[0]
             y, z = edge[0], edge[1]
-            if y not in done: done.make_set(y)
-            if z not in done: done.make_set(z)
             if done.find(y) != done.find(z):
                 result.add(edge)
                 done.union(y, z)
-                terminals.discard(y)
-                terminals.discard(z)
+            edges.discard(edge)
 
         return result
 
