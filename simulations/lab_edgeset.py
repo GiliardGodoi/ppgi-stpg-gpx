@@ -1,6 +1,6 @@
 import os
 
-from ga4stpg.edgeset.crossover import CrossoverRandomWalkRST, CrossoverKruskalRST
+from ga4stpg.edgeset.crossover import CrossoverPrimRST, CrossoverRandomWalkRST, CrossoverKruskalRST
 from ga4stpg.edgeset.evaluation import EvaluateEdgeSet
 from ga4stpg.edgeset.generate import gen_random_walk
 from ga4stpg.edgeset.mutate import MutationReplaceByRandomEdge
@@ -93,13 +93,52 @@ def simulation_kruskal_crossover(params):
 
     print(result.stoppedby)
 
+def simulation_prim_crossover(params):
+
+    STPG = read_problem("datasets", "ORLibrary", params["dataset"])
+
+    crossover = CrossoverPrimRST(STPG)
+    evaluation = EvaluateEdgeSet(STPG)
+    mutate = MutationReplaceByRandomEdge(STPG)
+
+    output_data_dir = os.path.join("data","test","edgeset", "kruskal_crossover", STPG.name)
+    tracker = DataTracker(params['runtrial'],target=output_data_dir)
+
+    population = (GPopulation(
+        chromosomes=[gen_random_walk(STPG) for _ in range(params["population_size"])],
+        eval_function=evaluation,
+        maximize=True)
+    .evaluate()
+    .normalize(norm_function=normalize)
+    .callback(update_best))
+
+    evol = (Evolution()
+                .evaluate()
+                .normalize(norm_function=normalize)
+                .callback(update_best)
+                .callback(tracker.log_evaluation)
+                .select(selection_func=roullete)
+                .crossover(combiner=crossover)
+                .mutate(mutate_function=mutate, probability=params['tx_mutation'])
+                .callback(update_generation)
+                .callback(display, every=100))
+
+    with Stagnation(interval=params["stagnation_interval"]), \
+        BestKnownReached(global_optimum=params['global_optimum']):
+        result = population.evolve(evol, n=params["n_iterations"])
+
+    tracker.log_simulation(params, STPG, result)
+    tracker.report()
+
+    print(result.stoppedby)
+
 if __name__ == "__main__":
     PARAMS = {
         'runtrial' : 0,
         'dataset' : 'steinb1.txt',
         'global_optimum'       : 82,
         'population_size'     : 100,
-        'tx_mutation'         : 0.4,
+        'tx_mutation'         : 0.2,
         # 'tx_crossover'        : 1.0,
         'n_iterations'        : 4_000,
         'stagnation_interval' : 500,
@@ -111,6 +150,6 @@ if __name__ == "__main__":
         print('='*10, '\n')
         PARAMS['dataset'] = dataset
         PARAMS['global_optimum'] = value
-        for i in range(30):
+        for i in range(15):
             PARAMS['runtrial'] = i + 1
-            simulation_kruskal_crossover(params=PARAMS)
+            simulation_prim_crossover(params=PARAMS)
