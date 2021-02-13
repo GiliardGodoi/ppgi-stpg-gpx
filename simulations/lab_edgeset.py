@@ -101,7 +101,7 @@ def simulation_prim_crossover(params):
     evaluation = EvaluateEdgeSet(STPG)
     mutate = MutationReplaceByRandomEdge(STPG)
 
-    output_data_dir = os.path.join("data","test","edgeset", "kruskal_crossover", STPG.name)
+    output_data_dir = os.path.join("data","test","edgeset", "prim_crossover", STPG.name)
     tracker = DataTracker(params['runtrial'],target=output_data_dir)
 
     population = (GPopulation(
