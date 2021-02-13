@@ -6,30 +6,6 @@ from ga4stpg.graph import UGraph
 from ga4stpg.graph.disjointsets import DisjointSets
 from ga4stpg.graph.priorityqueue import PriorityQueue
 
-class MutateRemovingCycle:
-
-    def __init__(self, stpg):
-        self.stpg = stpg
-
-    def __call__(self, chromosome : EdgeSet):
-        assert isinstance(chromosome, EdgeSet), f'Chromosome must be EdgeSet type: Given was <{type(chromosome)}>'
-        vertices = set(list(chromosome.vertices))
-        assert len(vertices) == len(chromosome) + 1
-
-        graph = self.stpg.graph
-        vi = sample(vertices, k=1)[0]
-
-        tree = UGraph()
-        for edge in chromosome:
-            u, v = edge[0], edge[1]
-            tree.add_edge(u, v)
-
-        candidates = set()
-        for w in graph.adjacent_to(vi):
-            if w in vertices:
-                candidates(w)
-
-
 class MutatitionReplaceByLowerEdge:
 
     def __init__(self, stpg):
