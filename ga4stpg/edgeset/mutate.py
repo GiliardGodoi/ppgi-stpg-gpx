@@ -1,4 +1,4 @@
-from random import choice, randint, sample
+from random import choice, randint, sample, shuffle
 from ga4stpg import graph
 
 from ga4stpg.edgeset import EdgeSet
@@ -71,5 +71,55 @@ class MutatitionReplaceByLowerEdge:
             if disjoints.find(w) != disjoints.find(v):
                 result.add(w, v)
                 disjoints.union(w,v)
+
+        return result
+
+
+class MutationReplaceByRandomEdge:
+
+    def __init__(self, stpg) -> None:
+        self.stpg = stpg
+
+    def __call__(self, chromosome : EdgeSet):
+        assert isinstance(chromosome, EdgeSet), f'Chromosome must be EdgeSet type: Given was <{type(chromosome)}>'
+        graph = self.stpg.graph
+
+        disjoints = DisjointSets()
+        result = EdgeSet()
+
+        for v in chromosome.vertices:
+            disjoints.make_set(v)
+
+        index = randint(0, len(chromosome))
+        for i, edge in enumerate(chromosome):
+            if i != index :
+                v, u = edge
+                disjoints.union(v, u)
+                result.add(v, u)
+
+        components = disjoints.get_disjoint_sets()
+
+        lesser_idx = min(components, key=lambda item: len(components[item]))
+        lesser = components[lesser_idx]
+        keys = components.keys() - set([lesser_idx])
+
+        for key in keys:
+            candidates = list()
+            greater_component = components[key]
+            for v in lesser:
+                for w in graph.adjacent_to(v):
+                    if w in greater_component:
+                        candidates.append((v, w))
+
+            while candidates:
+                shuffle(candidates)
+                v, w = candidates.pop()
+                if disjoints.find(v) != disjoints.find(w):
+                    result.add(v, w)
+                    disjoints.union(v, w)
+                    break
+
+        # if len(disjoints.get_disjoint_sets()) >= 2:
+        #     result.add(selected_edge)
 
         return result
