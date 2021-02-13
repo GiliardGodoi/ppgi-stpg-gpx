@@ -191,3 +191,6 @@ class EdgeSet:
         result = EdgeSet()
         result._edges = self._edges.copy()
         return result
+
+    def pop(self):
+        return self._edges.pop()
