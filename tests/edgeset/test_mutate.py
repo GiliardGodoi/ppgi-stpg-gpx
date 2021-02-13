@@ -100,6 +100,30 @@ class Test_MutationReplaceByRandomEdge(unittest.TestCase):
         self.assertTrue(response['graph_is_connected'])
         # It is not possible to grant that 'all_leaves_are_terminals'
 
+    def test_path_like_solution(self):
+        filename = path.join('datasets', 'test', 'test3.txt')
+        stpg  = ReaderORLibrary().parser(filename)
+
+        after = EdgeSet()
+        after.add(1, 3)
+        after.add(3, 8)
+        after.add(8, 5)
+        after.add(5, 6)
+
+        evaluate = EvaluateEdgeSet(stpg)
+        mutate   = MutationReplaceByRandomEdge(stpg)
+
+        cost_after, _ = evaluate(after)
+
+        self.assertEqual(cost_after, (5+7+7+15))
+
+        before = mutate(after)
+
+        self.assertEqual(after, before)
+
+        cost_before, _ = evaluate(before)
+        self.assertEqual(cost_after, cost_before)
+
 
 if __name__ == "__main__":
     unittest.main()
