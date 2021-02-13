@@ -5,13 +5,13 @@ import unittest
 from ga4stpg.edgeset import EdgeSet
 from ga4stpg.edgeset.evaluation import EvaluateEdgeSet
 from ga4stpg.edgeset.generate import gen_random_prim
-from ga4stpg.edgeset.mutate import MutateReconectingComponents
+from ga4stpg.edgeset.mutate import MutatitionReplaceByLowerEdge
 from ga4stpg.graph import UGraph
 from ga4stpg.graph.reader import ReaderORLibrary
 from ga4stpg.graph.util import is_steiner_tree
 
 
-class TestMutateReconectingComponents(unittest.TestCase):
+class TestMutatitionReplaceByLowerEdge(unittest.TestCase):
 
     @classmethod
     def setUpClass(cls) -> None:
@@ -23,7 +23,7 @@ class TestMutateReconectingComponents(unittest.TestCase):
     def test_simpliest(self):
         stpg  = self.stpg
 
-        mutate = MutateReconectingComponents(stpg)
+        mutate = MutatitionReplaceByLowerEdge(stpg)
 
         after = gen_random_prim(stpg)
 
@@ -49,7 +49,7 @@ class TestMutateReconectingComponents(unittest.TestCase):
     def test_resultant_cost(self):
         stpg  = self.stpg
 
-        mutate = MutateReconectingComponents(stpg)
+        mutate = MutatitionReplaceByLowerEdge(stpg)
         evaluate = EvaluateEdgeSet(stpg)
 
         after = gen_random_prim(stpg)

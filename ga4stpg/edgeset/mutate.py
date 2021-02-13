@@ -1,4 +1,5 @@
-from random import randint, sample
+from random import choice, randint, sample
+from ga4stpg import graph
 
 from ga4stpg.edgeset import EdgeSet
 from ga4stpg.graph import UGraph
@@ -29,7 +30,7 @@ class MutateRemovingCycle:
                 candidates(w)
 
 
-class MutateReconectingComponents:
+class MutatitionReplaceByLowerEdge:
 
     def __init__(self, stpg):
         self.stpg = stpg
@@ -65,26 +66,10 @@ class MutateReconectingComponents:
                     if w in components[key]:
                         candidates.push(graph.weight(w, v), (v, w))
 
-        while len(disjoints.get_disjoint_sets()) >= 2:
+        while len(disjoints.get_disjoint_sets()) >= 2 or candidates:
             w, v = candidates.pop()
             if disjoints.find(w) != disjoints.find(v):
                 result.add(w, v)
                 disjoints.union(w,v)
 
-
         return result
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
