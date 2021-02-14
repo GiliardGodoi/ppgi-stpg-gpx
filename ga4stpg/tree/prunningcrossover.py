@@ -1,9 +1,9 @@
 from operator import attrgetter
 from random import choice
 
-from graph import Graph
-from graph.util import compose
-from graph.steiner import prunning_mst
+from ga4stpg.graph import Graph
+from ga4stpg.graph.util import compose
+from ga4stpg.graph.steiner import prunning_mst
 
 class PrunningCrossover:
 

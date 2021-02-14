@@ -2,9 +2,9 @@ from collections import deque
 from operator import attrgetter
 from random import choice
 
-from graph import Graph
-from graph.util import compose
-from graph.disjointsets import DisjointSets
+from ga4stpg.graph import Graph
+from ga4stpg.util import compose
+from ga4stpg.graph.disjointsets import DisjointSets
 
 
 class Component:
@@ -177,14 +177,14 @@ def test_0():
 def test_1():
     from os import path
     from random import sample
-    from graph import ReaderORLibrary
+    from ga4stpg.graph import ReaderORLibrary
 
-    from graph.steiner import (prunning_mst, shortest_path,
+    from ga4stpg.graph.steiner import (prunning_mst, shortest_path,
                             shortest_path_origin_prim,
                             prunning_kruskal_mst,
                             shortest_path_with_origin)
 
-    from graph.util import (is_steiner_tree,
+    from ga4stpg.graph.util import (is_steiner_tree,
                             has_cycle,
                             gg_total_weight)
 
