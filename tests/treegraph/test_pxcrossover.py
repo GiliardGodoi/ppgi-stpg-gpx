@@ -1,12 +1,14 @@
-from ga4stpg.graph.reader import ReaderORLibrary
 import unittest
 from os import path
 from random import sample
 
-from ga4stpg.tree.pxcrossover import PXtree
-from ga4stpg.graph import ReaderORLibrary, UGraph
+from ga4stpg.graph.reader import ReaderORLibrary
+from ga4stpg.graph import UGraph
 from ga4stpg.graph.steiner import shortest_path_with_origin
 from ga4stpg.graph.util import is_steiner_tree, gg_total_weight
+
+from ga4stpg.tree.evaluation import EvaluateTreeGraph
+from ga4stpg.tree.pxcrossover import PXTree
 
 class TestPXCrossover(unittest.TestCase):
 
@@ -17,14 +19,15 @@ class TestPXCrossover(unittest.TestCase):
         vertices = list(stpg.graph.vertices)
         v, u = sample(vertices, 2)
 
-        crossover = PXtree(stpg)
+        crossover = PXTree(stpg)
+        evaluator = EvaluateTreeGraph(stpg)
 
         red, red_cost   = shortest_path_with_origin(stpg.graph, v, stpg.terminals)
         blue, blue_cost = shortest_path_with_origin(stpg.graph, u, stpg.terminals)
 
         child = crossover(red, blue)
 
-        child_cost = gg_total_weight(child)
+        child_cost, _ = evaluator(child)
 
         self.assertLessEqual(child_cost, red_cost)
         self.assertLessEqual(child_cost, blue_cost)
@@ -45,12 +48,12 @@ class TestPXCrossover(unittest.TestCase):
         for edge in edges:
             red.add_edge(edge[0], edge[1])
 
-        blue = UGraph
+        blue = UGraph()
         edges = [(1, 3), (3, 8), (3, 7), (7, 4), (4, 6)]
         for edge in edges:
             blue.add_edge(edge[0], edge[1])
 
-        crossover = PXtree(stpg)
+        crossover = PXTree(stpg)
 
         child = crossover(red, blue)
 
