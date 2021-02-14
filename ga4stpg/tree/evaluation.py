@@ -6,13 +6,13 @@ class EvaluateTreeGraph:
 
     def __init__(self,
                  stpg: SteinerTreeProblem,
-                 penality_function=None,
-                 apply_penalization = False):
+                 penality_function = None):
         self.STPG = stpg
-
-    def penality(self, factor):
+        self.apply_penalization = penality_function is not None
         if self.apply_penalization:
-            return self.penality_function()
+            self.penality = penality_function
+        else:
+            self.penality = lambda item : 0
 
 
     def __call__(self, tree):
@@ -34,6 +34,7 @@ class EvaluateTreeGraph:
 
         qtd_partition = len(DS.get_disjoint_sets())
 
-        total_cost += self.penality(qtd_partition)
+        if self.apply_penalization:
+            total_cost += self.penality(qtd_partition)
 
         return total_cost, qtd_partition
