@@ -100,7 +100,7 @@ class CrossoverRandomWalkRST:
         while terminals:
             done.add(v)
             adjacents = union_g.adjacent_to(v, lazy=False)
-            w = sample(adjacents, k=1)[0]
+            u = sample(adjacents, k=1)[0]
             if u not in done:
                 result.add_edge(v, u)
             terminals.discard(u)
