@@ -1,6 +1,7 @@
 from random import sample
 
 from ga4stpg.graph import UGraph
+from ga4stpg.graph.disjointsets import DisjointSets
 
 class CrossoverPrimRST:
 
@@ -50,7 +51,7 @@ class CrossoverKruskalRST:
         assert isinstance(red, UGraph), f'red parent must be UGraph. Given {type(red)}'
         assert isinstance(blue, UGraph), f'blue parent must be UGraph. Given {type(blue)}'
 
-        terminals = self.terminals.copy()
+        done = DisjointSets()
 
         union_g = UGraph()
         for v, u in red.gen_undirect_edges():
@@ -58,21 +59,21 @@ class CrossoverKruskalRST:
         for v, u in blue.gen_undirect_edges():
             union_g.add_edge(v, u)
 
+        for v in union_g.vertices:
+            done.make_set(v)
+
         all_edges = set()
-        for v, u in union_g.gen_undirect_edges():
-            all_edges.add((min(v, u), max(v, u)))
+        for edge in union_g.gen_undirect_edges():
+            all_edges.add(edge)
 
         result = UGraph()
-        while all_edges and terminals :
+        while all_edges and len(done.get_disjoint_sets()) > 1:
             edge = sample(all_edges, k=1)[0]
             v, u = edge[0], edge[1]
-            if v in result and u in result:
-                continue # do not add the edge
-            else:
+            if done.find(v) != done.find(u):
                 result.add_edge(v, u)
-                terminals.discard(v)
-                terminals.discard(u)
-            all_edges.discard(edge)
+                done.union(v, u)
+            all_edges.remove(edge)
 
         return result
 
