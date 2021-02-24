@@ -44,7 +44,7 @@ def simulation_pxtree_crossover_primbased_population(params):
                 .normalize(norm_function=normalize)
                 .callback(update_best)
                 .callback(tracker.log_evaluation)
-                .select(selection_func=non_selection)
+                .select(selection_func=roullete)
                 .crossover(combiner=crossover)
                 .mutate(mutate_function=mutate, probability=params['tx_mutation'])
                 .callback(update_generation)
