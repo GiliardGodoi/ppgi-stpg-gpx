@@ -1,6 +1,6 @@
 from random import choice, randint, sample, shuffle
 
-from ga4stpg.graph import UGraph
+from ga4stpg.graph import UGraph, UndirectedWeightedGraph as UWGraph
 from ga4stpg.graph.disjointsets import DisjointSets
 from ga4stpg.graph.priorityqueue import PriorityQueue
 
@@ -52,4 +52,38 @@ class ReplaceByRandomEdge:
         return result
 
 class PrimBasedMutation:
-    pass
+
+    def __init__(self, stpg):
+        self.stpg = stpg
+
+    def __call__(self, treegraph : UGraph):
+
+        GRAPH = self.stpg.graph
+        vertices = set(treegraph.vertices)
+
+        # Build the subgraph induced by the nodes in treegraph
+        subgraph = UWGraph()
+        for v in vertices:
+            for u in GRAPH.adjacent_to(v):
+                if u in vertices:
+                    weigth = GRAPH.weight(v, u)
+                    subgraph.add_edge(v, u, weight=weigth)
+
+        # Compute the Prim MST for the subgraph
+        mst = UGraph()
+        queue = PriorityQueue()
+
+        start = choice(tuple(vertices))
+
+        for next_node, weight in subgraph.edges[start].items():
+            queue.push(weight,(start, next_node))
+
+        while queue:
+            node_start, node_end = queue.pop()
+            if node_end not in mst:
+                mst.add_edge(node_start, node_end)
+
+                for next_node, weight in subgraph.edges[node_end].items():
+                    queue.push(weight,(node_end, next_node))
+
+        return mst
