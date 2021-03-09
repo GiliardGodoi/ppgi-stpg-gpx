@@ -1,5 +1,7 @@
 # -*- coding: utf-8 -*-
 from .reader import SteinerTreeProblem, Reader, ReaderORLibrary
+from .graph import UndirectedWeightedGraph
+from .graph import UndirectedWeightedGraph as UWGraph
 from .graph import UndirectedWeightedGraph as Graph
 from .graph import UndirectedGraph
 from .graph import UndirectedGraph as UGraph
