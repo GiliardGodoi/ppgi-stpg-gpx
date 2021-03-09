@@ -1,4 +1,5 @@
-from random import choice, randint, sample, shuffle
+from random import choice, randint, shuffle
+from collections import deque
 
 from ga4stpg.graph import UGraph, UndirectedWeightedGraph as UWGraph
 from ga4stpg.graph.disjointsets import DisjointSets
@@ -51,6 +52,7 @@ class ReplaceByRandomEdge:
 
         return result
 
+
 class PrimBasedMutation:
 
     def __init__(self, stpg):
@@ -87,3 +89,27 @@ class PrimBasedMutation:
                     queue.push(weight,(node_end, next_node))
 
         return mst
+
+
+class Prunning:
+
+    def __init__(self, stpg):
+        self.terminals = stpg.terminals.copy()
+
+    def __call__(self, treegraph : UGraph):
+
+        terminals = self.terminals
+        result = UGraph()
+        for v, u in treegraph.gen_undirect_edges():
+            result.add_edge(v, u)
+
+        leaves = deque([v for v in result.vertices if (v not in terminals) and (result.degree(v) == 1)])
+
+        while leaves:
+            v = leaves.pop()
+            for w in result.adjacent_to(v):
+                if (w not in terminals) and (result.degree(w) == 2):
+                    leaves.appendleft(w)
+            result.remove_node(v)
+
+        return result

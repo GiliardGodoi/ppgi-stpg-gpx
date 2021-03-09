@@ -8,7 +8,7 @@ from ga4stpg.graph.reader import ReaderORLibrary
 from ga4stpg.graph.util import is_steiner_tree
 from ga4stpg.tree.evaluation import EvaluateTreeGraph
 from ga4stpg.tree.generate import GenerateBasedRandomWalk
-from ga4stpg.tree.mutate import ReplaceByRandomEdge, PrimBasedMutation
+from ga4stpg.tree.mutate import ReplaceByRandomEdge, PrimBasedMutation, Prunning
 
 class TestMutateReplaceByRandomEdge(unittest.TestCase):
 
@@ -44,6 +44,7 @@ class TestPrimBasedMutation(unittest.TestCase):
 
         generator = GenerateBasedRandomWalk(stpg)
         mutator = PrimBasedMutation(stpg)
+        prunner = Prunning(stpg)
 
         before = generator()
 
@@ -57,10 +58,12 @@ class TestPrimBasedMutation(unittest.TestCase):
         after = mutator(before)
 
         self.assertIsInstance(after, UGraph)
+        after_after = prunner(after)
 
-        _, response = is_steiner_tree(after, stpg)
-        self.assertTrue(response['all_terminals_in'])
+        _, response = is_steiner_tree(after_after, stpg)
         self.assertFalse(response['has_cycle'])
+        self.assertTrue(response['all_leaves_are_terminals'])
+        self.assertTrue(response['all_terminals_in'])
         self.assertTrue(response['all_edges_are_reliable'])
         self.assertTrue(response['graph_is_connected'])
 
@@ -94,3 +97,26 @@ class TestPrimBasedMutation(unittest.TestCase):
         _, prim_cost = prim(subgraph, choice(tuple(stpg.terminals)))
 
         self.assertEqual(prim_cost, eval_cost)
+
+
+class TestPrunningMutation(unittest.TestCase):
+
+    def test_if_works(self):
+        possibles = [ f'steinb{ii}.txt' for ii in range(10, 19)]
+        filename = choice(possibles)
+        filename = path.join('datasets', 'ORLibrary', filename)
+        stpg  = ReaderORLibrary().parser(filename)
+
+        generator = GenerateBasedRandomWalk(stpg)
+        prunner = Prunning(stpg)
+
+        before = generator()
+        after = prunner(before)
+
+        test, response = is_steiner_tree(after, stpg)
+        self.assertTrue(test)
+        self.assertFalse(response['has_cycle'])
+        self.assertTrue(response['all_leaves_are_terminals'])
+        self.assertTrue(response['all_terminals_in'])
+        self.assertTrue(response['all_edges_are_reliable'])
+        self.assertTrue(response['graph_is_connected'])
