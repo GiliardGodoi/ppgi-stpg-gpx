@@ -50,11 +50,12 @@ class CrossoverPrimUnion:
 
     def __call__(self, red : UGraph, blue : UGraph):
 
-        f_weight = lambda v, u : self.stpg.graph.weigth(v,u)
+        f_weight = lambda v, u : self.stpg.graph.weight(v, u)
 
         union_g = UGraph()
         for v, u in red.gen_undirect_edges():
             union_g.add_edge(v ,u)
+
         for v, u in blue.gen_undirect_edges():
             union_g.add_edge(v, u)
 
@@ -69,9 +70,8 @@ class CrossoverPrimUnion:
             start, end = queue.pop()
             if end not in result:
                 result.add_edge(start, end)
-
-            for u in union_g.adjacent_to(end):
-                queue.push(f_weight(start, end), (start, end))
+                for w in union_g.adjacent_to(end):
+                    queue.push(f_weight(end, w), (end, w))
 
         return result
 
