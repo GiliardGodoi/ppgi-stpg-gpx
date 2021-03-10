@@ -2,8 +2,8 @@ from collections import defaultdict, deque
 from operator import attrgetter
 from random import choice
 
-from graph import Graph
-from graph.disjointsets import DisjointSets
+from ga4stpg.graph import Graph
+from ga4stpg.graph.disjointsets import DisjointSets
 
 def compose(red : Graph, blue : Graph):
     '''
@@ -149,13 +149,13 @@ class PX_FindTestCompare:
 def test_1():
     from os import path
     from random import sample
-    from graph import ReaderORLibrary
+    from ga4stpg.graph import ReaderORLibrary
 
-    from graph.steiner import (prunning_mst, shortest_path,
+    from ga4stpg.graph.steiner import (prunning_mst, shortest_path,
                             shortest_path_origin_prim,
                             prunning_kruskal_mst,
                             shortest_path_with_origin)
-    from graph.util import (is_steiner_tree,
+    from ga4stpg.graph.util import (is_steiner_tree,
                                 has_cycle,
                                 gg_total_weight)
     dataset_file = 'steinc5.txt'

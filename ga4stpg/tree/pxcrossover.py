@@ -2,9 +2,8 @@ from collections import deque
 from operator import attrgetter
 from random import choice
 
-from graph import Graph
-from graph.util import compose
-from graph.disjointsets import DisjointSets
+from ga4stpg.graph import UGraph
+from ga4stpg.graph.disjointsets import DisjointSets
 
 
 class Component:
@@ -17,74 +16,107 @@ class Component:
     def add(self, first, second):
         self.edges[second] = first
 
-def connected(g_union : Graph, red : Graph, blue : Graph, start : 'node'):
+def compose(red : UGraph, blue : UGraph):
+    '''
+    Parameters:
+    ----------
+        red, blue : Graph
 
-    linkedlist = deque([start])
-    visited = set()
-    parents = DisjointSets()
+    Return:
+    -------
+        g_union, g_common, g_star : Graph
+    '''
 
-    for v in g_union.vertices:
-        parents.make_set(v)
+    g_union  = UGraph()
+    g_common = UGraph()
+    g_star   = UGraph()
 
-    def chase(main, node, component):
+    for v, u in red.gen_undirect_edges():
+        g_union.add_edge(v, u)
 
-        if (node in red) and (node in blue):
-            if node not in visited and node not in linkedlist:
-                linkedlist.appendleft(node)
+        if not blue.has_edge(v,u):
+            g_star.add_edge(v,u)
 
-            component.portal.add(node)
-            return
+    for v, u in blue.gen_undirect_edges():
+        g_union.add_edge(v, u)
 
-        for w in main.adjacent_to(node):
-            if w in component.edges:
-                continue
-            component.add(node, w)
-            component.cost += main.W(node, w)
-            chase(main, w, component)
-        # end for loop
-        visited.add(node)
-
-    components_red  = list()
-    components_blue = list()
-
-    while linkedlist:
-        u = linkedlist.pop()
-        visited.add(u)
-        for v in g_union.adjacent_to(u):
-            if v in visited:
-                continue
-            if red.has_edge(u,v) and blue.has_edge(u,v):
-                linkedlist.append(v)
-                parents.union(u, v)
-
-            elif red.has_edge(u,v):
-                component = Component(u, v, initialcost=g_union.W(u,v))
-                chase(red, v, component)
-                chase(red, u, component)
-                components_red.append(component)
-
-            elif blue.has_edge(u,v):
-                component = Component(u, v, initialcost=g_union.W(u,v))
-                chase(blue, v, component)
-                chase(blue, u, component)
-                components_blue.append(component)
-        # end for loop
-    # end while loop
-    return components_red, components_blue, parents
+        if red.has_edge(v,u):
+            g_common.add_edge(v, u)
+        else:
+            g_star.add_edge(v,u)
 
 
-class PXtree:
+    return g_union, g_common, g_star
+
+class PXTree:
 
     def __init__(self, stpg):
         self.STPG = stpg
         self.terminals = list(stpg.terminals)
+        self.f_weight = lambda x, y: self.STPG.graph.weight(x, y)
 
-    def __call__(self, red : Graph, blue : Graph):
+    def connected(self, g_union : UGraph, red : UGraph, blue : UGraph, start : 'node'):
+
+        linkedlist = deque([start])
+        visited = set()
+        parents = DisjointSets()
+        f_weight = self.f_weight
+
+        for v in g_union.vertices:
+            parents.make_set(v)
+
+        def chase(main, node, component):
+
+            if (node in red) and (node in blue):
+                if node not in visited and node not in linkedlist:
+                    linkedlist.appendleft(node)
+
+                component.portal.add(node)
+                return
+
+            for w in main.adjacent_to(node):
+                if w in component.edges:
+                    continue
+                component.add(node, w)
+                component.cost += f_weight(node, w)
+                chase(main, w, component)
+            # end for loop
+            visited.add(node)
+
+        components_red  = list()
+        components_blue = list()
+
+        while linkedlist:
+            u = linkedlist.pop()
+            visited.add(u)
+            for v in g_union.adjacent_to(u):
+                if v in visited:
+                    continue
+                if red.has_edge(u,v) and blue.has_edge(u,v):
+                    linkedlist.append(v)
+                    parents.union(u, v)
+
+                elif red.has_edge(u,v):
+                    component = Component(u, v, initialcost=f_weight(u,v))
+                    chase(red, v, component)
+                    chase(red, u, component)
+                    components_red.append(component)
+
+                elif blue.has_edge(u,v):
+                    component = Component(u, v, initialcost=f_weight(u,v))
+                    chase(blue, v, component)
+                    chase(blue, u, component)
+                    components_blue.append(component)
+            # end for loop
+        # end while loop
+        return components_red, components_blue, parents
+
+    def __call__(self, red : UGraph, blue : UGraph):
 
         start = choice(self.terminals)
 
         g_union, g_common, g_star = compose(red, blue)
-        first, second, previous = connected(g_union, red, blue, start)
+        first, second, previous = self.connected(g_union, red, blue, start)
 
         matches = dict()
 
@@ -135,87 +167,12 @@ class PXtree:
             for v, u in component.edges.items():
                 if u is None:
                     continue
-                w = self.STPG.graph.W(v,u)
-                g_common.add_edge(v,u,weight=w)
+                g_common.add_edge(v,u)
 
         for component in selected:
             for v, u in component.edges.items():
                 if u is None:
                     continue
-                w = self.STPG.graph.W(v,u)
-                g_common.add_edge(v,u,weight=w)
+                g_common.add_edge(v,u)
 
-        return g_common, success, fail
-
-
-def test_0():
-
-    aa = Graph(edges={
-        'A' : {'B' : 1, 'C' : 1},
-        'B' : {'A' : 1, 'D' : 1, 'E' : 1},
-        'D' : {'B' : 1},
-        'C' : {'A' : 1},
-        'E' : {'B' : 1, 'G' : 1},
-        'G' : {'E' : 1, 'H' : 1},
-        'H' : {'G' : 1}
-    })
-
-    bb = Graph(edges={
-        'A' : {'B' : 1, 'C' : 1},
-        'B' : {'A' : 1, 'D' : 1},
-        'D' : {'B' : 1},
-        'C' : {'A' : 1, 'F' : 1},
-        'F' : {'C' : 1, 'G' : 1},
-        'G' : {'F' : 1, 'H' : 1},
-        'H' : {'G' : 1}
-    })
-
-    g_union, g_common, g_star = compose(aa, bb)
-
-    first, second, previous = connected(g_union, aa, bb, 'A')
-
-def test_1():
-    from os import path
-    from random import sample
-    from graph import ReaderORLibrary
-
-    from graph.steiner import (prunning_mst, shortest_path,
-                            shortest_path_origin_prim,
-                            prunning_kruskal_mst,
-                            shortest_path_with_origin)
-
-    from graph.util import (is_steiner_tree,
-                            has_cycle,
-                            gg_total_weight)
-
-    dataset_file = 'steinc5.txt'
-
-    csv_output = 'resultado.csv'
-    graphs_output = 'grafos.pickle'
-
-    file = path.join('datasets','ORLibrary', dataset_file)
-
-    assert path.exists(file), "Arquivo especificado não existe"
-
-    reader = ReaderORLibrary()
-    stpg = reader.parser(file)
-    vertices = list(stpg.graph.vertices)
-
-    crossover = PXtree(stpg)
-    v, u = sample(vertices, 2)
-
-    aa, a_cost = shortest_path_with_origin(stpg.graph, v, stpg.terminals)
-    bb, b_cost = shortest_path_with_origin(stpg.graph, u, stpg.terminals)
-
-    child = crossover(bb, aa)
-    c_cost = gg_total_weight(child)
-
-    print(a_cost, b_cost, c_cost)
-    print(is_steiner_tree(aa, stpg))
-    print(is_steiner_tree(bb, stpg))
-    print(is_steiner_tree(child, stpg))
-
-    return aa, bb, child
-
-if __name__ == "__main__":
-    test_1()
+        return g_common

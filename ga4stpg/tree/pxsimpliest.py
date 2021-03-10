@@ -1,7 +1,7 @@
 from collections import deque
-from graph import Graph, SteinerTreeProblem
 
-from base.util import record_parents
+from ga4stpg.graph import Graph, SteinerTreeProblem
+from ga4stpg.util import record_parents
 
 class SimpliestPX:
     '''
