@@ -11,7 +11,7 @@ class TestEvaluateTreeGraph(unittest.TestCase):
 
     def test_example_solution_one(self):
 
-        filename = path.join("datasets", "test", "test4.txt")
+        filename = path.join("tests","data", "test4.txt")
         stpg = ReaderORLibrary().parser(filename)
 
         tree = UGraph()
@@ -28,7 +28,7 @@ class TestEvaluateTreeGraph(unittest.TestCase):
         self.assertEqual(cost, (5+7+4+4+6))
 
     def test_example_solution_two_components(self):
-        filename = path.join("datasets", "test", "test4.txt")
+        filename = path.join("tests","data", "test4.txt")
         stpg = ReaderORLibrary().parser(filename)
 
         tree = UGraph()
@@ -47,7 +47,7 @@ class TestEvaluateTreeGraph(unittest.TestCase):
 
     def test_penality_function(self):
 
-        filename = path.join("datasets", "test", "test4.txt")
+        filename = path.join("tests","data", "test4.txt")
         stpg = ReaderORLibrary().parser(filename)
 
         tree = UGraph()
@@ -66,7 +66,7 @@ class TestEvaluateTreeGraph(unittest.TestCase):
 
     @unittest.skip("not implemented yet")
     def test_edge_non_exist_in_stpg_instance(self):
-        filename = path.join("datasets", "test", "test4.txt")
+        filename = path.join("tests","data", "test4.txt")
         stpg = ReaderORLibrary().parser(filename)
 
         tree = UGraph()
