@@ -23,6 +23,29 @@ STEIN_B = [
     ("steinb18.txt", 218), # 17
 ]
 
+STEIN_C = [
+    ("steinc1.txt", 85),
+    ("steinc2.txt", 144),
+    ("steinc3.txt", 754),
+    ("steinc4.txt", 1079),
+    ("steinc5.txt", 1579),
+    ("steinc6.txt", 55),
+    ("steinc7.txt", 102),
+    ("steinc8.txt", 509),
+    ("steinc9.txt", 707),
+    ("steinc10.txt", 1093),
+    ("steinc11.txt", 32),
+    ("steinc12.txt", 46),
+    ("steinc13.txt", 258),
+    ("steinc14.txt", 323),
+    ("steinc15.txt", 556),
+    ("steinc16.txt", 11),
+    ("steinc17.txt", 18),
+    ("steinc18.txt", 113),
+    ("steinc19.txt", 146),
+    ("steinc20.txt", 267),
+]
+
 def display(population):
     size = len(population)
     msg = f"Population {population.id} | size {size} | generation {population.generation} | best cost {population.documented_best.cost}"
