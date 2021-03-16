@@ -31,7 +31,7 @@ def simulation(simulation_name, params):
     print("Nro. Node:", STPG.nro_nodes)
     print("Nro. Edges:", STPG.nro_edges)
     print("Nro. Terminals:", STPG.nro_terminals)
-    print("Terminals: \n", STPG.terminals)
+    # print("Terminals: \n", STPG.terminals)
 
     output_folder = path.join("data", simulation_name, STPG.name)
     tracker = DataTracker(params['runtrial'],target=output_folder)
