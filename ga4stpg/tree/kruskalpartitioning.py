@@ -40,7 +40,7 @@ class Partition:
 
     @property
     def bounds(self):
-        return frozenset(self.portals)
+        return frozenset(self.portal)
 
     def add(self, v, u):
         self.edges.add((v, u))
@@ -93,7 +93,7 @@ class KruskalBasedPartitioning:
                         segment.portal.add(u)
                 else:
                     stack_outter.append(u)
-                    segment.portals.add(u)
+                    segment.portal.add(u)
             # end while
             return segment
             # end search
