@@ -38,7 +38,7 @@ def simulation(simulation_name, params):
 
     generator = GenerateBasedPrimRST(STPG)
     evaluator = EvaluateTreeGraph(STPG)
-    crossover = CrossoverPrimUnion(STPG)
+    crossover = CrossoverPrimRST(STPG)
     prunner   = Prunning(STPG)
     mut_prim  = PrimBasedMutation(STPG)
     replace_random = ReplaceByRandomEdge(STPG)
