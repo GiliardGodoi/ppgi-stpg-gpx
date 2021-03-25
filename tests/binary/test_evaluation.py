@@ -80,7 +80,7 @@ class TestEvaluateBinary(unittest.TestCase):
         self.assertEqual(evaluator_cost, mst_cost)
 
     def test_vertices_from_chromossome_random_chromosome(self):
-        filename = path.join('datasets', 'test', 'test1.txt')
+        filename = path.join('tests', 'data', 'test1.txt')
         stpg  = ReaderORLibrary().parser(filename)
 
         self.assertIsNotNone(stpg)
@@ -108,7 +108,7 @@ class TestEvaluateBinary(unittest.TestCase):
         self.assertEqual(vertices_from, expected_vertices)
 
     def test_decoder_random_chromosome(self):
-        filename = path.join('datasets', 'test', 'test1.txt')
+        filename = path.join('tests', 'data', 'test1.txt')
         stpg  = ReaderORLibrary().parser(filename)
 
         evaluator = EvaluateKruskalBased(stpg)
@@ -146,7 +146,7 @@ class TestEvaluateBinary(unittest.TestCase):
         self.assertFalse(subgraph.has_edge(7, 6))
 
     def test_evaluate_test1(self):
-        filename = path.join('datasets', 'test', 'test1.txt')
+        filename = path.join('tests', 'data', 'test1.txt')
         stpg  = ReaderORLibrary().parser(filename)
 
         evaluator = EvaluateKruskalBased(stpg)
@@ -157,7 +157,7 @@ class TestEvaluateBinary(unittest.TestCase):
         self.assertEqual(evaluator_cost, 33)
 
     def test_evaluate_test2(self):
-        filename = path.join('datasets', 'test', 'test2.txt')
+        filename = path.join('tests', 'data', 'test2.txt')
         stpg  = ReaderORLibrary().parser(filename)
 
         evaluator = EvaluateKruskalBased(stpg)

@@ -40,7 +40,7 @@ class TestPXCrossover(unittest.TestCase):
         self.assertTrue(response['all_leaves_are_terminals'])
 
     def test_exchange_edges(self):
-        filename = path.join('datasets', 'test', 'test3.txt')
+        filename = path.join('tests', 'data', 'test3.txt')
         stpg  = ReaderORLibrary().parser(filename)
 
         red = UGraph()

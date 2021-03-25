@@ -5,6 +5,12 @@ import logging
 from collections import defaultdict
 from statistics import pvariance, mean as fmean
 
+def handle_default(obj):
+    if isinstance(obj, set):
+        return list(obj)
+    print(f"Object of type {type(obj)} is not JSON serializable")
+    return ""
+
 class DataLogger:
     '''Simple class to collect and store data from the simulations.
 
@@ -144,7 +150,7 @@ class DataLogger:
 
         try:
             with open(filename, mode) as file :
-                json.dump(data, fp=file, indent=2)
+                json.dump(data, fp=file, indent=2, default=handle_default)
         except Exception as msg:
             print(msg)
             return False
@@ -200,6 +206,15 @@ class DataTracker(DataLogger):
             "bestdocumented_cost",
             "bestdocumented_fitness",
             "bestdocumented_last_improvement")
+
+        self.register("bestindividual", "json")
+        self.register("is_steiner_tree", "csv",
+                "test",
+                'has_cycle',
+                'all_terminals_in',
+                'all_leaves_are_terminals',
+                'all_edges_are_reliable',
+                'graph_is_connected')
 
     def log_evaluation(self, population : 'Population', **kwargs):
 
@@ -261,3 +276,14 @@ class DataTracker(DataLogger):
             bestchromosome.last_improvement,
             POPULATION.stoppedby
         )
+
+    def log_bestIndividual(self, individual, test, complete_test):
+
+        self.log("bestindividual", individual.chromosome.edges)
+        self.log("is_steiner_tree",
+                    test,
+                    complete_test["has_cycle"],
+                    complete_test["all_terminals_in"],
+                    complete_test["all_leaves_are_terminals"],
+                    complete_test["all_edges_are_reliable"],
+                    complete_test["graph_is_connected"])

@@ -101,7 +101,7 @@ class Test_MutationReplaceByRandomEdge(unittest.TestCase):
         # It is not possible to grant that 'all_leaves_are_terminals'
 
     def test_path_like_solution(self):
-        filename = path.join('datasets', 'test', 'test3.txt')
+        filename = path.join('tests', 'data', 'test3.txt')
         stpg  = ReaderORLibrary().parser(filename)
 
         after = EdgeSet()
