@@ -12,7 +12,7 @@ output_folder = path.join("..", "data", "exp_heuristic")
 instance_folder = path.join("..", "datasets", "ORLibrary")
 
 instance_class = 'c'
-instance_qtd = 18
+instance_qtd = 20
 
 instances = [f'stein{instance_class}{ii}.txt' for ii in range(1, instance_qtd+1)]
 
