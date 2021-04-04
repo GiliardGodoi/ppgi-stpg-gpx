@@ -1,6 +1,3 @@
-from collections import deque
-from random import randrange
-
 from ga4stpg.graph import UGraph
 from ga4stpg.graph.disjointsets import DisjointSets
 from ga4stpg.graph.priorityqueue import PriorityQueue
@@ -33,7 +30,10 @@ class Partition:
         return len(self.edges)
 
     def __str__(self):
-        return f'Segment <{len(self.edges)}>'
+        return f'Partition <{self.portal}>'
+
+    def __repr__(self):
+        return self.__str__()
 
     def __iter__(self):
         return iter(self.edges)
