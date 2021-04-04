@@ -26,6 +26,7 @@ def simulation(simulation_name, params):
     STPG = ReaderORLibrary().parser(filename)
 
     print("STPG information", '\n', 10*'- ','\n')
+    print("Trial: ", parameters['runtrial'])
     print('Instance: ', STPG.name)
     print('Best Known cost: ', params['global_optimum'])
     print("Nro. Node:", STPG.nro_nodes)
@@ -100,4 +101,4 @@ if __name__ == "__main__":
         parameters['global_optimum'] = value
         for i in range(50):
             parameters['runtrial'] = i + 1
-            simulation("sim_mutations", parameters)
+            simulation("exp_primRST_MT_replace", parameters)

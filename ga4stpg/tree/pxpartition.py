@@ -1,6 +1,6 @@
+import random
 from ga4stpg.graph import UGraph
 from ga4stpg.graph.disjointsets import DisjointSets
-from ga4stpg.graph.priorityqueue import PriorityQueue
 
 def check_portals(portals, disjoint):
     '''Verifica se os vértices portais de um segmento
@@ -19,6 +19,40 @@ def check_portals(portals, disjoint):
         f_check.add(k)
 
     return True
+
+def _dict_matches_from(partitions, disjoint):
+    matches = dict()
+    for partition in partitions:
+        key = frozenset(disjoint.find(v) for v in partition.portal)
+        matches[key] = partition
+    return matches
+
+def select_partition_and_union(child, red_dict, blue_dict, disjoint, matches):
+    for key in matches:
+        red_p  = red_dict.pop(key)
+        blue_p = blue_dict.pop(key)
+
+        choosed = None
+        if red_p.cost == blue_p.cost:
+            choosed = random.choice([red_p, blue_p])
+            # print(red_p, blue_p)
+            # print("Random ", choosed)
+        elif red_p.cost < blue_p.cost:
+            choosed = red_p
+            # print("Red: ", choosed)
+        elif blue_p.cost < red_p.cost:
+            choosed = blue_p
+            # print("Blue: ", choosed)
+
+        for v, u in choosed.edges:
+            child.add_edge(v, u)
+        g_portals = iter(choosed.portal)
+        last_p = next(g_portals)
+        for p in g_portals:
+            disjoint.union(last_p, p)
+            last_p = p
+
+    return child, red_dict, blue_dict, disjoint
 
 class Partition:
     def __init__(self):
@@ -45,7 +79,7 @@ class Partition:
     def add(self, v, u):
         self.edges.add((v, u))
 
-class KruskalBasedPartitioning:
+class PartitionCrossoverSteinerTree:
 
     def __init__(self, stpg) -> None:
         self.STPG = stpg
@@ -59,22 +93,14 @@ class KruskalBasedPartitioning:
     def find_partitions(self, subgraph, specific_nodes):
         visited = set()
         f_weight = self.f_weight
-        # start = None
-        # index = randrange(0, len(common_nodes))
-        # for i, nro in enumerate(common_nodes):
-        #     if i == index:
-        #         start = nro
-        #         break
-        # assert start is not None
-        # stack_outter = [start]
         stack_outter = list(specific_nodes)
         result = list()
 
         def search(start, neighbor):
-            segment = Partition()
-            segment.portal.add(start)
-            segment.add(start, neighbor)
-            segment.cost += f_weight(start, neighbor)
+            partition = Partition()
+            partition.portal.add(start)
+            partition.add(start, neighbor)
+            partition.cost += f_weight(start, neighbor)
 
             stack_inner = [neighbor]
 
@@ -86,16 +112,16 @@ class KruskalBasedPartitioning:
                     for w in subgraph.adjacent_to(u):
                         if w not in visited:
                             stack_inner.append(w)
-                            segment.add(u, w)
-                            segment.cost += f_weight(u, w)
+                            partition.add(u, w)
+                            partition.cost += f_weight(u, w)
                             counter += 1
                     if counter == 0:
-                        segment.portal.add(u)
+                        partition.portal.add(u)
                 else:
                     stack_outter.append(u)
-                    segment.portal.add(u)
+                    partition.portal.add(u)
             # end while
-            return segment
+            return partition
             # end search
 
         while stack_outter:
@@ -109,15 +135,18 @@ class KruskalBasedPartitioning:
 
         return result
 
-
-    def __call__(self, red: UGraph, blue: UGraph):
+    def __call__(self, red : UGraph, blue : UGraph):
         child     = UGraph()
         red_only  = UGraph()
         blue_only = UGraph()
 
+        _vertices = set()
+
         for v, u in red.gen_undirect_edges():
             if blue.has_edge(v, u):
                 child.add_edge(v, u)
+                _vertices.add(v)
+                _vertices.add(u)
             else:
                 red_only.add_edge(v, u)
 
@@ -125,46 +154,48 @@ class KruskalBasedPartitioning:
             if not red.has_edge(v, u):
                 blue_only.add_edge(v, u)
 
+
         common_nodes_red = set(red_only.vertices) & set(blue.vertices)
         common_nodes_blue = set(blue_only.vertices) & set(red.vertices)
 
         red_partitions  = self.find_partitions(red_only, common_nodes_red)
         blue_partitions = self.find_partitions(blue_only, common_nodes_blue)
 
-        queue = PriorityQueue()
+        _vertices.update(common_nodes_red | common_nodes_blue)
+        disjoint = DisjointSets()
 
-        for partition in red_partitions:
-            queue.push(partition.cost, partition)
-
-        for partition in blue_partitions:
-            queue.push(partition.cost, partition)
-
-        common_nodes = set(red.vertices) | set(blue.vertices)
-        dset = DisjointSets()
-
-        for v in common_nodes:
-            dset.make_set(v)
+        for v in _vertices:
+            disjoint.make_set(v)
 
         for v, u in child.gen_undirect_edges():
-            dset.union(v, u)
+            disjoint.union(v, u)
 
-        while queue:
-            partition = queue.pop()
+        red_dict  = _dict_matches_from(red_partitions, disjoint)
+        blue_dict = _dict_matches_from(blue_partitions, disjoint)
+        matches   = red_dict.keys() & blue_dict.keys()
 
-            if check_portals(partition.portal, dset):
+        while matches:
+            child, red_dict, blue_dict, disjoint = select_partition_and_union(child, red_dict, blue_dict, disjoint, matches)
+            red_dict  = _dict_matches_from(red_dict.values(), disjoint)
+            blue_dict = _dict_matches_from(blue_dict.values(), disjoint)
+            matches = red_dict.keys() & blue_dict.keys()
 
-                # add edges
-                for v, u in partition:
-                    child.add_edge(v, u)
+        red_child  = UGraph()
+        blue_child = UGraph()
 
-                # update dset
-                portals = iter(partition.portal)
+        for v, u in child.gen_undirect_edges():
+            red_child.add_edge(v, u)
+            blue_child.add_edge(v, u)
 
-                p_last = next(portals)
-                for p in portals:
-                    dset.union(p_last, p)
-                    p_last = p
+        for partition in red_dict.values():
+            for v, u in partition:
+                red_child.add_edge(v, u)
 
-        return child
+        for partition in blue_dict.values():
+            for v, u in partition:
+                blue_child.add_edge(v, u)
 
+        return red_child, blue_child
 
+if __name__ == "__main__":
+    pass
