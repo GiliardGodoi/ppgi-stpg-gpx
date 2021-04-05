@@ -22,7 +22,6 @@ def simulation(name, params):
     filename = path.join("datasets", "ORLibrary", params["dataset"])
     stpg = ReaderORLibrary().parser(filename)
 
-    print('Trial: ', parameters['runtrial'])
     print("STPG information", '\n', 10*'- ','\n')
     print('Instance: ', stpg.name)
     print('Best Known cost: ', params['global_optimum'])
@@ -34,7 +33,7 @@ def simulation(name, params):
     generator = GenerateBasedRandomWalk(stpg)
     evaluator = EvaluateTreeGraph(stpg)
     prunner   = Prunning(stpg)
-    prim_mutation  = PrimBasedMutation(stpg)
+    # mut_prim  = PrimBasedMutation(stpg)
     replace_random = ReplaceByRandomEdge(stpg)
     partition_cx = PartitionCrossoverSteinerTree(stpg)
 
@@ -57,7 +56,6 @@ def simulation(name, params):
         .callback(tracker.log_evaluation)
         .select(selection_func=roullete)
         .crossover(combiner=partition_cx)
-        .mutate(mutate_function=prim_mutation, probability=0.3)
         .mutate(mutate_function=replace_random, probability=0.3)
         .mutate(mutate_function=prunner, probability=1.0)
         .callback(update_generation)
@@ -97,4 +95,4 @@ if __name__ == "__main__":
         parameters['global_optimum'] = value
         for i in range(50):
             parameters['runtrial'] = i + 1
-            simulation("exp_PXST_primMutation", parameters)
+            simulation("exp_PXST", parameters)
