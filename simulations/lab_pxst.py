@@ -39,7 +39,7 @@ def simulation(name, params):
     partition_cx = PartitionCrossoverSteinerTree(stpg)
 
     output_data_dir = path.join("data", name, stpg.name)
-    tracker = DataTracker('001',target=output_data_dir)
+    tracker = DataTracker(parameters['runtrial'], target=output_data_dir)
 
     population = (GPopulation(
         chromosomes=[ generator() for _ in range(100)],
@@ -57,7 +57,6 @@ def simulation(name, params):
         .callback(tracker.log_evaluation)
         .select(selection_func=roullete)
         .crossover(combiner=partition_cx)
-        .mutate(mutate_function=prunner, probability=1.0)
         .mutate(mutate_function=prim_mutation, probability=0.3)
         .mutate(mutate_function=replace_random, probability=0.3)
         .mutate(mutate_function=prunner, probability=1.0)
@@ -98,4 +97,4 @@ if __name__ == "__main__":
         parameters['global_optimum'] = value
         for i in range(50):
             parameters['runtrial'] = i + 1
-            simulation("exp_PXST_primMutation2", parameters)
+            simulation("exp_PXST_primMutation", parameters)
