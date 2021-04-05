@@ -60,6 +60,7 @@ def simulation(name, params):
         .mutate(mutate_function=prunner, probability=1.0)
         .mutate(mutate_function=prim_mutation, probability=0.3)
         .mutate(mutate_function=replace_random, probability=0.3)
+        .mutate(mutate_function=prunner, probability=1.0)
         .callback(update_generation)
         .callback(display, every=100))
 
