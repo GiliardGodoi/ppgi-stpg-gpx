@@ -22,6 +22,7 @@ def simulation(name, params):
     filename = path.join("datasets", "ORLibrary", params["dataset"])
     stpg = ReaderORLibrary().parser(filename)
 
+    print('Trial: ', parameters['runtrial'])
     print("STPG information", '\n', 10*'- ','\n')
     print('Instance: ', stpg.name)
     print('Best Known cost: ', params['global_optimum'])
