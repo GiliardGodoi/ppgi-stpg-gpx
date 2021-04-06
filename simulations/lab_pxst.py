@@ -56,7 +56,6 @@ def simulation(name, params):
         .callback(tracker.log_evaluation)
         .select(selection_func=roullete)
         .crossover(combiner=partition_cx)
-        .mutate(mutate_function=prunner, probability=1.0)
         .mutate(mutate_function=replace_random, probability=0.3)
         .mutate(mutate_function=prim_mutation, probability=0.3)
         .mutate(mutate_function=prunner, probability=1.0)
@@ -97,4 +96,4 @@ if __name__ == "__main__":
         parameters['global_optimum'] = value
         for i in range(50):
             parameters['runtrial'] = i + 1
-            simulation("exp_PXST_primMutation2", parameters)
+            simulation("exp_PXST_base", parameters)
