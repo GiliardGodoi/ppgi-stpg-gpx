@@ -1,4 +1,4 @@
-from random import randrange, choice
+from random import choice, randrange, sample
 
 from ga4stpg.graph import UGraph
 from ga4stpg.graph.disjointsets import DisjointSets
