@@ -43,7 +43,7 @@ class CrossoverPrimRST:
 
         return result
 
-class CrossoverPrimUnion:
+class CrossoverGreedyPrim:
 
     def __init__(self, stpg):
         self.stpg = stpg
@@ -71,6 +71,43 @@ class CrossoverPrimUnion:
             if end not in result:
                 result.add_edge(start, end)
                 for w in union_g.adjacent_to(end):
+                    queue.push(f_weight(end, w), (end, w))
+
+        return result
+
+
+class CrossoverRelativeGreedyPrim:
+
+    def __init__(self, stpg):
+        self.GRAPH = stpg.graph
+
+    def __call__(self, red : UGraph, blue : UGraph):
+
+        f_weight = lambda v, u : self.GRAPH.weight(v, u)
+
+        g_union = UGraph()
+        for v, u in red.gen_undirect_edges():
+            g_union.add_edge(v, u)
+        for v, u in blue.gen_undirect_edges():
+            g_union.add_edge(v, u)
+
+        vertices = set(g_union.vertices)
+        queue = PriorityQueue()
+        start = choice(tuple(vertices))
+        for u in g_union.adjacent_to(start):
+            queue.push(f_weight(start, u), (start, u))
+
+        result = UGraph()
+        while queue:
+            i = 0
+            s = choice([1, 2])
+            while i != s:
+                start, end = queue.pop()
+                i += 1
+
+            if end not in result:
+                result.add_edge(start, end)
+                for w in g_union.adjacent_to(end):
                     queue.push(f_weight(end, w), (end, w))
 
         return result
