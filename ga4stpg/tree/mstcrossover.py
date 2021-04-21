@@ -130,18 +130,17 @@ class CrossoverKruskalRST:
         for v in union_g.vertices:
             done.make_set(v)
 
-        all_edges = set()
+        all_edges = list()
         for edge in union_g.gen_undirect_edges():
-            all_edges.add(edge)
+            all_edges.append(edge)
 
         result = UGraph()
         while all_edges and len(done.get_disjoint_sets()) > 1:
-            edge = sample(all_edges, k=1)[0]
-            v, u = edge[0], edge[1]
+            idx = randrange(0, len(all_edges))
+            v, u = all_edges.pop(idx)
             if done.find(v) != done.find(u):
                 result.add_edge(v, u)
                 done.union(v, u)
-            all_edges.remove(edge)
 
         return result
 
