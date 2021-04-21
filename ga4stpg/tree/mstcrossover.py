@@ -1,4 +1,4 @@
-from random import sample, choice
+from random import randrange, choice
 
 from ga4stpg.graph import UGraph
 from ga4stpg.graph.disjointsets import DisjointSets
@@ -22,24 +22,23 @@ class CrossoverPrimRST:
         terminals = self.terminals.copy()
         done = set()
         result = UGraph()
-        candidates_edges = set()
+        candidates_edges = list()
 
         vi = terminals.pop()
         done.add(vi)
         for u in union_g.adjacent_to(vi):
-            candidates_edges.add((vi, u))
+            candidates_edges.append((vi, u))
 
         while candidates_edges and terminals:
-            edge = sample(candidates_edges, k=1)[0]
-            v, w = edge
+            idx = randrange(0, len(candidates_edges))
+            v, w = candidates_edges.pop(idx)
             if w not in done:
                 done.add(w)
                 result.add_edge(v, w)
                 terminals.discard(w)
                 for u in union_g.adjacent_to(w):
                     if u not in done:
-                        candidates_edges.add((w, u))
-            candidates_edges.discard((v, w))
+                        candidates_edges.append((w, u))
 
         return result
 
