@@ -1,5 +1,4 @@
-from random import sample, shuffle
-
+from random import sample, shuffle, randrange, choice
 from ga4stpg.graph import UGraph
 from ga4stpg.graph.disjointsets import DisjointSets
 
@@ -13,24 +12,22 @@ class GenerateBasedPrimRST:
         result = UGraph()
         terminals = self.stpg.terminals.copy()
         GRAPH = self.stpg.graph
-        edges = set() # or is it better a list?
-        vi = sample(range(1, self.stpg.nro_nodes+1), k=1)[0]
-
+        edges = list() # or is it better a list?
+        vi = choice(range(1, self.stpg.nro_nodes+1))
         terminals.discard(vi)
+
         for w in GRAPH.adjacent_to(vi):
-            edges.add((vi, w))
+            edges.append((vi, w))
 
         while terminals and edges:
-            edge = sample(edges, k=1)[0] # need to ensure randomness
-            v, w = edge
+            idx = randrange(0, len(edges))
+            v, w = edges.pop(idx) # need to ensure randomness
             if w not in result:
                 terminals.discard(w)
                 result.add_edge(v, w)
                 for u in GRAPH.adjacent_to(w):
                     if u not in result:
-                        edges.add((w, u))
-            edges.remove(edge) # to remove from a list it can take O(n)
-
+                        edges.append((w, u))
         return result
 
 
@@ -55,7 +52,7 @@ class GenerateBasedKruskalRST:
             if y not in done: done.make_set(y)
             if z not in done: done.make_set(z)
             if done.find(y) != done.find(z):
-                result.add(y, z)
+                result.add_edge(y, z)
                 done.union(y, z)
 
         return result
