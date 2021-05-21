@@ -12,7 +12,7 @@ from ga4stpg.selector import roullete
 from ga4stpg.tracker import DataTracker
 from ga4stpg.tree.evaluation import EvaluateTreeGraph
 from ga4stpg.tree.generate import GenerateBasedPrimRST
-from ga4stpg.tree.mstcrossover import CrossoverPrimUnion, CrossoverPrimRST
+from ga4stpg.tree.mstcrossover import CrossoverGreedyPrim, CrossoverPrimRST
 from ga4stpg.tree.mutate import (PrimBasedMutation, Prunning,
                                  ReplaceByRandomEdge)
 from ga4stpg.util import STEIN_B, display, update_best, update_generation
