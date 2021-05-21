@@ -4,7 +4,7 @@ from ga4stpg.graph import ReaderORLibrary
 from ga4stpg.graph.util import is_steiner_tree
 
 from ga4stpg.tree.evaluation import EvaluateTreeGraph
-from ga4stpg.tree.mstcrossover import CrossoverPrimUnion
+from ga4stpg.tree.mstcrossover import CrossoverGreedyPrim
 from ga4stpg.tree.generate import GenerateBasedRandomWalk
 from ga4stpg.tree.mutate import ReplaceByRandomEdge, PrimBasedMutation, Prunning
 from ga4stpg.tree.pxpartition import PartitionCrossoverSteinerTree
@@ -28,7 +28,8 @@ def simulation(name, params):
     print("Nro. Node:", stpg.nro_nodes)
     print("Nro. Edges:", stpg.nro_edges)
     print("Nro. Terminals:", stpg.nro_terminals)
-    print("Terminals: \n", stpg.terminals)
+    # print("Terminals: \n", stpg.terminals)
+    print("Trial nro: ", parameters['runtrial'])
 
     generator = GenerateBasedRandomWalk(stpg)
     evaluator = EvaluateTreeGraph(stpg)
@@ -41,10 +42,9 @@ def simulation(name, params):
     tracker = DataTracker(parameters['runtrial'], target=output_data_dir)
 
     population = (GPopulation(
-        chromosomes=[ generator() for _ in range(100)],
+        chromosomes=[ generator() for _ in range(params['population_size'])],
         eval_function=evaluator,
         maximize=True)
-    .mutate(mutate_function=prunner, probability=1.0)
     .evaluate()
     .normalize(norm_function=normalize)
     .callback(update_best))
@@ -58,7 +58,7 @@ def simulation(name, params):
         .crossover(combiner=partition_cx)
         .mutate(mutate_function=replace_random, probability=0.3)
         .mutate(mutate_function=prim_mutation, probability=0.3)
-        .mutate(mutate_function=prunner, probability=1.0)
+        .mutate(mutate_function=prunner, probability=0.3)
         .callback(update_generation)
         .callback(display, every=100))
 
@@ -96,4 +96,4 @@ if __name__ == "__main__":
         parameters['global_optimum'] = value
         for i in range(50):
             parameters['runtrial'] = i + 1
-            simulation("exp_PXST_base", parameters)
+            simulation("exp_pxst_v2", parameters)
