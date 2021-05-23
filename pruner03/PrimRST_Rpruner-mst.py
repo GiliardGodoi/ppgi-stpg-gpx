@@ -93,7 +93,7 @@ if __name__ == "__main__":
         'stagnation_interval' : 500,
     }
 
-    for dataset, value in STEIN_B:
+    for dataset, value in STEIN_B[13:]:
         print('='*10,'\n', dataset)
         print('global optimum ', value)
         print('='*10, '\n')
