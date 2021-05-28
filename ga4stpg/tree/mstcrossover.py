@@ -42,6 +42,7 @@ class CrossoverPrimRST:
 
         return result
 
+
 class CrossoverGreedyPrim:
 
     def __init__(self, stpg):
@@ -110,6 +111,7 @@ class CrossoverRelativeGreedyPrim:
                     queue.push(f_weight(end, w), (end, w))
 
         return result
+
 
 class CrossoverKruskalRST:
     def __init__(self, stpg):
