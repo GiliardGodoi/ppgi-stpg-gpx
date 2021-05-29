@@ -45,6 +45,7 @@ def simulation(name, params):
         chromosomes=[ generator() for _ in range(params['population_size'])],
         eval_function=evaluator,
         maximize=True)
+    .mutate(mutate_function=prunner, probability=1.0)
     .evaluate()
     .normalize(norm_function=normalize)
     .callback(update_best))
@@ -58,7 +59,7 @@ def simulation(name, params):
         .crossover(combiner=partition_cx)
         .mutate(mutate_function=replace_random, probability=0.3)
         .mutate(mutate_function=prim_mutation, probability=0.3)
-        .mutate(mutate_function=prunner, probability=0.3)
+        .mutate(mutate_function=prunner, probability=1.0)
         .callback(update_generation)
         .callback(display, every=100))
 
@@ -88,7 +89,7 @@ if __name__ == "__main__":
         'stagnation_interval' : 500,
     }
 
-    for dataset, value in STEIN_B:
+    for dataset, value in STEIN_B[13:15]:
         print('='*10,'\n', dataset)
         print('global optimum ', value)
         print('='*10, '\n')
@@ -96,4 +97,4 @@ if __name__ == "__main__":
         parameters['global_optimum'] = value
         for i in range(50):
             parameters['runtrial'] = i + 1
-            simulation("exp_pxst_v2", parameters)
+            simulation("test_pxst", parameters)
