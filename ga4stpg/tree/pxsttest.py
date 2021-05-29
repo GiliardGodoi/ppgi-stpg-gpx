@@ -27,7 +27,7 @@ def _dict_matches_from(partitions, disjoint):
         matches[key] = partition
     return matches
 
-def select_partition_and_union(selected, red_dict, blue_dict, disjoint, matches):
+def select_partition_and_union(child, red_dict, blue_dict, disjoint, matches):
     for key in matches:
         red_p  = red_dict.pop(key)
         blue_p = blue_dict.pop(key)
@@ -44,15 +44,15 @@ def select_partition_and_union(selected, red_dict, blue_dict, disjoint, matches)
             choosed = blue_p
             # print("Blue: ", choosed)
 
-        selected.append(choosed)
-
+        for v, u in choosed.edges:
+            child.add_edge(v, u)
         g_portals = iter(choosed.portal)
         last_p = next(g_portals)
         for p in g_portals:
             disjoint.union(last_p, p)
             last_p = p
 
-    return selected, red_dict, blue_dict, disjoint
+    return child, red_dict, blue_dict, disjoint
 
 class Partition:
     def __init__(self):
@@ -79,7 +79,8 @@ class Partition:
     def add(self, v, u):
         self.edges.add((v, u))
 
-class PartitionCrossoverSteinerTree:
+class TestPXST:
+    '''Versão de teste do PXST'''
 
     def __init__(self, stpg) -> None:
         self.STPG = stpg
@@ -136,16 +137,17 @@ class PartitionCrossoverSteinerTree:
         return result
 
     def __call__(self, red : UGraph, blue : UGraph):
-
+        child     = UGraph()
         red_only  = UGraph()
         blue_only = UGraph()
 
-        common_vertices = set(red.vertices) & set(blue.vertices)
-        common_edges = set()
+        _vertices = set()
 
         for v, u in red.gen_undirect_edges():
             if blue.has_edge(v, u):
-                common_edges.add((v, u))
+                child.add_edge(v, u)
+                _vertices.add(v)
+                _vertices.add(u)
             else:
                 red_only.add_edge(v, u)
 
@@ -154,33 +156,27 @@ class PartitionCrossoverSteinerTree:
                 blue_only.add_edge(v, u)
 
 
-        for v in red_only.vertices:
-            if (red.degree(v) == 1) and (v not in self.STPG.terminals):
-                common_vertices.add(v)
-        for v in blue_only.vertices:
-            if blue.degree(v) == 1 and (v not in self.STPG.terminals):
-                common_vertices.add(v)
-
-        disjoint = DisjointSets()
-        for v in common_vertices:
-            disjoint.make_set(v)
-        for v, u in common_edges:
-            disjoint.union(v, u)
-
-        common_nodes_red = set(red_only.vertices) & common_vertices
-        common_nodes_blue = set(blue_only.vertices) & common_vertices
+        common_nodes_red = set(red_only.vertices) & set(blue.vertices)
+        common_nodes_blue = set(blue_only.vertices) & set(red.vertices)
 
         red_partitions  = self.find_partitions(red_only, common_nodes_red)
         blue_partitions = self.find_partitions(blue_only, common_nodes_blue)
+
+        _vertices.update(common_nodes_red | common_nodes_blue)
+        disjoint = DisjointSets()
+
+        for v in _vertices:
+            disjoint.make_set(v)
+
+        for v, u in child.gen_undirect_edges():
+            disjoint.union(v, u)
 
         red_dict  = _dict_matches_from(red_partitions, disjoint)
         blue_dict = _dict_matches_from(blue_partitions, disjoint)
         matches   = red_dict.keys() & blue_dict.keys()
 
-        selected = list()
-
         while matches:
-            selected, red_dict, blue_dict, disjoint = select_partition_and_union(selected, red_dict, blue_dict, disjoint, matches)
+            child, red_dict, blue_dict, disjoint = select_partition_and_union(child, red_dict, blue_dict, disjoint, matches)
             red_dict  = _dict_matches_from(red_dict.values(), disjoint)
             blue_dict = _dict_matches_from(blue_dict.values(), disjoint)
             matches = red_dict.keys() & blue_dict.keys()
@@ -188,14 +184,9 @@ class PartitionCrossoverSteinerTree:
         red_child  = UGraph()
         blue_child = UGraph()
 
-        for v, u in common_edges:
+        for v, u in child.gen_undirect_edges():
             red_child.add_edge(v, u)
             blue_child.add_edge(v, u)
-
-        for partition in selected:
-            for v, u in partition:
-                red_child.add_edge(v, u)
-                blue_child.add_edge(v, u)
 
         for partition in red_dict.values():
             for v, u in partition:
