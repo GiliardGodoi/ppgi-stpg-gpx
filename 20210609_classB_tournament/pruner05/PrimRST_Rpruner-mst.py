@@ -102,4 +102,4 @@ if __name__ == "__main__":
         parameters['global_optimum'] = value
         for i in range(50):
             parameters['runtrial'] = i + 1
-            simulation("S5PrimRST_pruner10Mst", parameters)
+            simulation("S7PrimRST_pruner10Mst", parameters)
