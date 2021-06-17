@@ -110,12 +110,12 @@ if __name__ == "__main__":
         'stagnation_interval' : 500,
     }
 
-    for dataset, value in STEIN_B[:1]:
+    for dataset, value in STEIN_B:
         print('='*10,'\n', dataset)
         print('global optimum ', value)
         print('='*10, '\n')
         PARAMS['dataset'] = dataset
         PARAMS['global_optimum'] = value
-        for i in range(30):
+        for i in range(50):
             PARAMS['runtrial'] = i + 1
-            simulation("teste_prob_5", PARAMS, get_evol=sim_binary_2pointcrossover)
+            simulation("20210617_ga_binary", PARAMS, get_evol=sim_binary_2pointcrossover)
