@@ -15,7 +15,7 @@ from ga4stpg.customevol import GeneticPopulation as GPopulation
 from ga4stpg.normalization import normalize
 from ga4stpg.selector import roullete
 from ga4stpg.tracker import DataTracker
-from ga4stpg.util import STEIN_B, display, update_best, update_generation
+from ga4stpg.util import STEIN_C, display, update_best, update_generation
 
 def display_experiment_params(params, stpg):
     print("STPG information", '\n', 10*'- ','\n')
@@ -112,9 +112,9 @@ if __name__ == "__main__":
         'stagnation_interval' : 100,
     }
 
-    for dataset, value in STEIN_B:
+    for dataset, value in STEIN_C:
         parameters['dataset'] = dataset
         parameters['global_optimum'] = value
         for i in range(50):
             parameters['runtrial'] = i + 1
-            experiment("S5PXST_Rpruner10Mst", parameters)
+            experiment("S11_hybrid_strategy", parameters)
