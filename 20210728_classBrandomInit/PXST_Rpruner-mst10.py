@@ -103,4 +103,4 @@ if __name__ == "__main__":
         parameters['global_optimum'] = value
         for i in range(50):
             parameters['runtrial'] = i + 1
-            simulation("S10_primRST_randomInit", parameters)
+            simulation("S10_pxst_randomInit", parameters)
