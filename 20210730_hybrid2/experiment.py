@@ -66,33 +66,35 @@ def experiment(name, params):
         .mutate(mutate_function=prim_mutation, probability=0.3)
         .mutate(mutate_function=pruner, probability=1.0)
         .callback(update_generation)
-        .callback(display, every=19))
+        .callback(display, every=50))
 
     pipe2 = (Evolution()
         .evaluate()
         .normalize(norm_function=normalize)
         .callback(update_best)
         .callback(tracker.log_evaluation)
-        .select(selection_func=roullete)
+        .select(selection_func=tournament)
         .crossover(combiner=crossover_pxst)
         .mutate(mutate_function=replace_random, probability=0.3)
         .mutate(mutate_function=prim_mutation, probability=0.3)
         .mutate(mutate_function=pruner, probability=1.0)
         .callback(update_generation)
-        .callback(display, every=19))
+        .callback(display, every=50))
 
-    for _ in range(params["n_iterations"]):
-        population = population.evolve(pipe1, n=20)
+    for _ in range(5):
+        population = population.evolve(pipe1, n=10)
+        population.evaluate()
         best_so_far = population.documented_best
         intended_size = population.intended_size
         population.individuals.append(best_so_far)
-        population.individuals = sorted(population.individuals, key=attrgetter("fitness"))[:intended_size]
+        population.individuals = sorted(population.individuals, key=attrgetter("cost"))[:intended_size]
 
-        population = population.evolve(pipe2, n=20)
+        population = population.evolve(pipe2, n=10)
+        population.evaluate()
         best_so_far = population.documented_best
         intended_size = population.intended_size
         population.individuals.append(best_so_far)
-        population.individuals = sorted(population.individuals, key=attrgetter("fitness"))[:intended_size]
+        population.individuals = sorted(population.individuals, key=attrgetter("cost"))[:intended_size]
 
 
     tracker.log_simulation(params, stpg, population)
@@ -113,13 +115,13 @@ if __name__ == "__main__":
         'population_size'     : 100,
         'tx_mutation'         : 0.3,
         'tx_crossover'        : 1.0,
-        'n_iterations'        : 200,
+        'n_iterations'        : 10,
         'stagnation_interval' : 100,
     }
 
     for dataset, value in STEIN_C:
         parameters['dataset'] = dataset
         parameters['global_optimum'] = value
-        for i in range(50):
+        for i in range(30):
             parameters['runtrial'] = i + 1
             experiment("S12_hybrid_swap", parameters)
