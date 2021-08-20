@@ -97,18 +97,31 @@ class CrossoverRelativeGreedyPrim:
         for u in g_union.adjacent_to(start):
             queue.push(f_weight(start, u), (start, u))
 
+        leftover_edges = set()
         result = UGraph()
         while queue:
+
+            if len(queue) > 1:
+                s = choice([1, 2])
+            else:
+                s = 1
+
             i = 0
-            s = choice([1, 2])
             while i != s:
                 start, end = queue.pop()
                 i += 1
+                if i < s:
+                    leftover_edges.add((start, end))
 
             if end not in result:
                 result.add_edge(start, end)
                 for w in g_union.adjacent_to(end):
                     queue.push(f_weight(end, w), (end, w))
+
+            if not queue and leftover_edges:
+                for v, u in leftover_edges:
+                    if (v not in result) or (u not in result):
+                        queue.push(f_weight(v, u), (v, u))
 
         return result
 
