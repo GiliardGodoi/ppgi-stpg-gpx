@@ -113,3 +113,20 @@ class Prunning:
             result.remove_node(v)
 
         return result
+
+class InsertRandomVertice:
+
+    def __init__(self, stpg):
+        self.stpg = stpg
+
+
+    def __call__(self, treegraph : UGraph):
+        pass
+
+class ReplaceMultiplusEdges:
+
+    def __init__(self, stpg):
+        self.stpg = stpg
+
+    def __call__(self, treegraph : UGraph):
+        pass
