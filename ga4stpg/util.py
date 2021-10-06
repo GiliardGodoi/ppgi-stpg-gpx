@@ -69,6 +69,30 @@ STEIN_D = [
     ("steind20.txt", 537),
 ]
 
+
+STEIN_E = [
+    ("steine1.txt", 111),
+    ("steine2.txt", 214),
+    ("steine3.txt", 4013),
+    ("steine4.txt", 5101),
+    ("steine5.txt", 8128),
+    ("steine6.txt", 73),
+    ("steine7.txt", 145),
+    ("steine8.txt", 2640),
+    ("steine9.txt", 3604),
+    ("steine10.txt", 5600),
+    ("steine11.txt", 34),
+    ("steine12.txt", 67),
+    ("steine13.txt", 1280),
+    ("steine14.txt", 1732),
+    ("steine15.txt", 2784),
+    ("steine16.txt", 15),
+    ("steine17.txt", 25),
+    ("steine18.txt", 564),
+    ("steine19.txt", 758),
+    ("steine20.txt", 1342),
+]
+
 def display(population):
     size = len(population)
     msg = f"Population {population.id} | size {size} | generation {population.generation} | best cost {population.documented_best.cost}"
