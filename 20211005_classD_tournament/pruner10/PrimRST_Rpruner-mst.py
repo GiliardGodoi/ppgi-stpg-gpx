@@ -87,11 +87,11 @@ if __name__ == "__main__":
         'runtrial' : 0,
         'dataset' : 'steinb1.txt',
         'global_optimum'       : 82,
-        'population_size'     : 100,
+        'population_size'     : 200,
         'tx_mutation'         : 0.3,
         'tx_crossover'        : 1.0,
         'n_iterations'        : 4_000,
-        'stagnation_interval' : 500,
+        'stagnation_interval' : 150,
     }
 
     for dataset, value in STEIN_D:
