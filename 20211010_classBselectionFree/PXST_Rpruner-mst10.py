@@ -16,7 +16,8 @@ from ga4stpg.tree.mutate import (PrimBasedMutation, Prunning,
                                  ReplaceByRandomEdge)
 from ga4stpg.util import STEIN_B, display, update_best, update_generation
 
-
+def placebo(individuals):
+    return individuals
 
 def simulation(simulation_name, params):
 
@@ -57,6 +58,7 @@ def simulation(simulation_name, params):
         .normalize(norm_function=normalize)
         .callback(update_best)
         .callback(tracker.log_evaluation)
+        .select(selection_func=placebo)
         .crossover(combiner=crossover)
         .mutate(mutate_function=replace_random, probability=0.3)
         .mutate(mutate_function=mut_prim, probability=0.3)
