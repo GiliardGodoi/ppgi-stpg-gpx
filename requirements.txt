@@ -1,7 +1,7 @@
-﻿atomicwrites==1.4.0
+atomicwrites==1.4.0
 attrs @ file:///tmp/build/80754af9/attrs_1600298409949/work
 autopep8 @ file:///tmp/build/80754af9/autopep8_1596578164842/work
-certifi==2022.12.7
+certifi==2023.7.22
 colorama @ file:///tmp/build/80754af9/colorama_1603211150991/work
 dill==0.3.3
 -e git+https://github.com/GiliardGodoi/evol.git@eff561c81950a52c600918f883bd274ecf4f0a58#egg=evol
