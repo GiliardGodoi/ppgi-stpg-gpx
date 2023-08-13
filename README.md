@@ -1,14 +1,11 @@
 # Solving Steiner Tree Problem using Genetic Algorithm
 
-This project aims to solve Steiner Tree Problem in Graph (STPG) using Genetic Algorithm (GA).
+The project aims to get better solutions for the Steiner Tree Problem in Graph (STPG) using Genetic Algorithm (GA).
 
-## Instalation
+This repository holds the source code for the paper *''A graph-based crossover and soft-repair operators for the Steiner Tree Problem''*, presented at 10th Brazilian Conference on Intelligent Systems. 
+The paper publication can be found [here](https://doi.org/10.1007/978-3-030-91702-9_8).
 
-## Running
-
-## Published Paper
-
-This is the source code for the paper ''A graph-based crossover and soft-repair operators for the Steiner Tree Problem'', presented at 10th Brazilian Conference on Intelligent Systems. More information about the event can be found [here](https://c4ai.inova.usp.br/bracis2021/).
+I carried out efforts to attain a better operators implementation. Please, visit the following repositories to futher references: [`pypxst`](https://github.com/GiliardGodoi/pypxst), [`edgesets`](https://github.com/GiliardGodoi/edgesets), [`xsteiner`](https://github.com/GiliardGodoi/xsteiner).
 
 To cite the paper, please refer to:
 ```
