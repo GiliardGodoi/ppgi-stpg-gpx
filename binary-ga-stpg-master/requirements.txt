@@ -20,7 +20,7 @@ pycosat==0.6.3
 pycparser @ file:///tmp/build/80754af9/pycparser_1594388511720/work
 pyOpenSSL @ file:///tmp/build/80754af9/pyopenssl_1608057966937/work
 PySocks @ file:///C:/ci/pysocks_1594394709107/work
-pywin32==227
+pywin32==301
 PyYAML==5.3.1
 QtPy==1.9.0
 requests @ file:///tmp/build/80754af9/requests_1608241421344/work
