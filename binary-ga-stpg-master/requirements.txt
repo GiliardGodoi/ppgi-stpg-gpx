@@ -9,7 +9,7 @@ conda-package-handling @ file:///C:/ci/conda-package-handling_1603018162806/work
 conda-verify==3.1.1
 cryptography @ file:///C:/ci/cryptography_1607639129468/work
 dill==0.3.1.1
-future==0.18.2
+future==0.18.3
 idna @ file:///tmp/build/80754af9/idna_1593446292537/work
 Jinja2==2.11.3
 MarkupSafe @ file:///C:/ci/markupsafe_1594405949945/work
