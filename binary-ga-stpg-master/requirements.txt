@@ -1,6 +1,6 @@
 ﻿attrs==19.1.0
 brotlipy==0.7.0
-certifi==2020.12.5
+certifi==2024.7.4
 cffi @ file:///C:/ci/cffi_1606255207413/work
 chardet @ file:///C:/ci/chardet_1607706910910/work
 click==7.1.2
